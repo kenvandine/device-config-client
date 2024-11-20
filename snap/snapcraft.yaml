@@ -1,0 +1,54 @@
+name: device-config-client
+version: git
+summary: Device Config Client
+description: Generate device configuration from Device Lookup Service
+base: core24
+grade: stable
+confinement: strict
+platforms:
+  amd64:
+
+apps:
+  gen-landscape-conf:
+    command: bin/gen-landscape-conf
+    plugs:
+      - network
+      - home
+  query:
+    command: bin/query
+    plugs:
+      - network
+      - home
+  add:
+    command: bin/add
+    plugs:
+      - network
+      - home
+  autoinstall:
+    command: bin/autoinstall
+    plugs:
+      - network
+      - home
+  add-autoinstall:
+    command: bin/add-autoinstall
+    plugs:
+      - network
+      - home
+
+parts:
+  device-config-client:
+    plugin: dump
+    source: .
+    build-packages:
+      - git
+    stage-packages:
+      - curl
+      - jq
+    stage-snaps:
+      - yq
+    organize:
+      gen-landscape-conf: bin/
+      query: bin/
+      add: bin/
+      autoinstall: bin/
+      add-autoinstall: bin/

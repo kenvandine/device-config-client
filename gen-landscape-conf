@@ -1,0 +1,57 @@
+#!/bin/bash
+# Query service by serial number and generate a landscape client.conf
+
+
+usage ()
+{
+  echo "usage: $0 SERIAL OUTPUT_FILE"
+  exit 1
+}
+
+if [ $# -eq 2 ];
+then
+  serial=$1
+  client_conf=$2
+else
+  usage
+fi
+
+validate='https?://*'
+
+if [ -z "${DEVICE_LOOKUP_SERVER}" ];
+then
+  server_url="$(snapctl get url 2>/dev/null)"
+  # Validate it
+  if [[ ! $server_url =~ $validate ]]; then
+    echo "DEVICE_LOOKUP_SERVER not set"
+    exit 1
+  fi
+else
+  server_url=${DEVICE_LOOKUP_SERVER}
+  if [[ ! $server_url =~ $validate ]]; then
+    echo "Invalid DEVICE_LOOKUP_SERVER URL $server_url"
+    exit 1
+  fi
+fi
+
+OUT=$(curl -s -X GET $server_url/devices/$serial)
+
+landscape_account_name=$(echo $OUT | jq '.landscape_account_name')
+landscape_url=$(echo $OUT | jq '.landscape_url')
+landscape_ping_url=$(echo $OUT | jq '.landscape_ping_url')
+landscape_registration_key=$(echo $OUT | jq '.landscape_registration_key')
+
+CLIENT_CONF=out.conf
+cat > "$client_conf" << EOF
+[client]
+log_level = info
+url = $landscape_url
+ping_url = $landscape_ping_url
+computer_title = $serial
+account_name = $landscape_account_name
+manager_plugins = ProcessKiller,UserManager,ShutdownManager,HardwareInfo,KeystoneToken,SnapManager,SnapServicesManager,ScriptExecution,UbuntuProInfo
+monitor_plugins = ActiveProcessInfo,ComputerInfo,LoadAverage,MemoryInfo,MountInfo,ProcessorInfo,Temperature,UserMonitor,RebootRequired,NetworkActivity,NetworkDevice,CPUUsage,SwiftUsage,CephUsage,ComputerTags,SnapServicesMonitor,CloudInit
+script_users = ALL
+EOF
+
+echo "$client_conf generated"

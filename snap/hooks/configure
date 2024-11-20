@@ -1,0 +1,11 @@
+#!/bin/sh -e
+
+_url="$(snapctl get url)"
+
+validate='https?://*'
+
+# Validate it
+if [[ ! $_url =~ $validate ]]; then
+    echo "\"$_url\" is not a valid url" >&2
+    exit 1
+fi

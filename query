@@ -1,0 +1,44 @@
+#!/bin/bash
+# Query service by serial number for configuration values
+
+usage ()
+{
+  echo "usage: $0 SERIAL"
+}
+
+if [ $# -gt 0 ];
+then
+  if [ $1 == "-h" ];
+  then
+    usage
+    exit
+  fi
+  serial=$1
+fi
+
+validate='https?://*'
+
+if [ -z "${DEVICE_LOOKUP_SERVER}" ];
+then
+  server_url="$(snapctl get url 2>/dev/null)"
+  # Validate it
+  if [[ ! $server_url =~ $validate ]]; then
+    echo "DEVICE_LOOKUP_SERVER not set"
+    exit 1
+  fi
+else
+  server_url=${DEVICE_LOOKUP_SERVER}
+  if [[ ! $server_url =~ $validate ]]; then
+    echo "Invalid DEVICE_LOOKUP_SERVER URL $server_url"
+    exit 1
+  fi
+fi
+
+if [ $serial ];
+then
+  OUT=$(curl -s -X GET $server_url/devices/$serial)
+else
+  OUT=$(curl -s -X GET $server_url/devices)
+fi
+
+echo $OUT | jq
