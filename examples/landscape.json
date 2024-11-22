@@ -1,5 +1,6 @@
 {
-  "landscape-id": 123456,
-  "landscape-registration-key": "SOME_KEY",
-  "landscape-url": "https://landscape.canonical.com"
+  "landscape_account_name": "123456",
+  "landscape_ping_url": "http://landscape.canonical.com/ping",
+  "landscape_registration_key": "123456",
+  "landscape_url": "https://landscape.canonical.com/message-system"
 }
