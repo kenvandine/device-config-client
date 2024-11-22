@@ -56,6 +56,7 @@ url = $landscape_url
 ping_url = $landscape_ping_url
 computer_title = $serial
 account_name = $landscape_account_name
+registration_key = $landscape_registration_key
 manager_plugins = ProcessKiller,UserManager,ShutdownManager,HardwareInfo,KeystoneToken,SnapManager,SnapServicesManager,ScriptExecution,UbuntuProInfo
 monitor_plugins = ActiveProcessInfo,ComputerInfo,LoadAverage,MemoryInfo,MountInfo,ProcessorInfo,Temperature,UserMonitor,RebootRequired,NetworkActivity,NetworkDevice,CPUUsage,SwiftUsage,CephUsage,ComputerTags,SnapServicesMonitor,CloudInit
 script_users = ALL
