@@ -8,8 +8,15 @@ usage ()
   exit 1
 }
 
-if [ $# -eq 2 ];
-then
+# Attempt to read serial from stdin and fallback to arg
+if [ -p /dev/stdin ]; then
+  read serial
+  if [ $1 ]; then
+    client_conf=$1
+  else
+    usage
+  fi
+elif [ $1 ] && [ $2 ]; then
   serial=$1
   client_conf=$2
 else

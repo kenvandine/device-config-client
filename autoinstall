@@ -14,7 +14,13 @@ then
     usage
     exit
   fi
-  serial=$1
+fi
+
+# Attempt to read serial from stdin and fallback to arg
+if [ -p /dev/stdin ]; then
+  read serial
+elif [ -n "$1" ]; then
+  serial="$1"
 fi
 
 validate='https?://*'
