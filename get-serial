@@ -1,0 +1,14 @@
+#!/bin/bash
+# 
+# Retrieve the chassis serial from the DMI information
+# useful for the other device-config-client tools
+
+serial=$(cat /sys/class/dmi/id/chassis_serial 2>/dev/null)
+
+if [ ${#serial} -gt 0 ];
+then
+    echo $serial
+else
+    echo "Device serial not available"
+    exit 1
+fi

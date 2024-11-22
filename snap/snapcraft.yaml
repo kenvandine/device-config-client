@@ -34,6 +34,10 @@ apps:
     plugs:
       - network
       - home
+  get-serial:
+    command: bin/get-serial
+    plugs:
+      - hardware-observe
 
 parts:
   device-config-client:
@@ -52,3 +56,4 @@ parts:
       add: bin/
       autoinstall: bin/
       add-autoinstall: bin/
+      get-serial: bin/
