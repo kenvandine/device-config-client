@@ -15,6 +15,13 @@ in dmidecode which can be found in /sys/class/dmi/id/chassis_serial
 sudo snap install device-config-client
 ```
 
+To read device serial, the hardware-observe interface is required. For now this
+needs to be manually connected:
+
+```
+sudo snap connect device-config-client:hardware-observe
+```
+
 # Device Configuration
 Supports querying a device-config-client for any available configuraion
 values.
@@ -46,6 +53,13 @@ Query for configuration values for all devices:
 ```
 device-config-client.query
 ```
+
+Read device serial from /sys/class/dmi/id/chassis_id:
+```
+sudo device-config-client.get-serial
+```
+Reading the device serial does require root, so sudo is necessary. The output of the get-serial
+command is suitable to be passed as stdin to other commands
 
 Adding record for new device serial. You can find a valid configuration at examples/device.json
 ```
