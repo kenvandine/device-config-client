@@ -14,13 +14,23 @@ apps:
     plugs:
       - network
       - home
-  query:
-    command: bin/query
+  bios:
+    command: bin/bios
     plugs:
       - network
       - home
-  add:
-    command: bin/add
+  add-bios:
+    command: bin/add-bios
+    plugs:
+      - network
+      - home
+  device:
+    command: bin/device
+    plugs:
+      - network
+      - home
+  add-device:
+    command: bin/add-device
     plugs:
       - network
       - home
@@ -38,6 +48,10 @@ apps:
     command: bin/get-serial
     plugs:
       - hardware-observe
+  get-product-name:
+    command: bin/get-product-name
+    plugs:
+      - hardware-observe
 
 parts:
   device-config-client:
@@ -52,8 +66,11 @@ parts:
       - yq
     organize:
       gen-landscape-conf: bin/
-      query: bin/
-      add: bin/
+      device: bin/
+      add-device: bin/
+      bios: bin/
+      add-bios: bin/
       autoinstall: bin/
       add-autoinstall: bin/
       get-serial: bin/
+      get-product-name: bin/

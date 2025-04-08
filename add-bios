@@ -1,0 +1,52 @@
+#!/bin/bash
+# Add bios configuration values for a given device product name
+
+usage ()
+{
+  echo "usage: $0 PRODUCT_NAME FILE_PATH"
+  exit 1
+}
+
+if [ $# -eq 2 ];
+then
+  product_name=$1
+  file_path=$2
+else
+  usage
+  exit 1
+fi
+
+validate='https?://*'
+
+if [ -z "${DEVICE_LOOKUP_SERVER}" ];
+then
+  server_url="$(snapctl get url 2>/dev/null)"
+  # Validate it
+  if [[ ! $server_url =~ $validate ]]; then
+    echo "DEVICE_LOOKUP_SERVER not set"
+    exit 1
+  fi
+else
+  server_url=${DEVICE_LOOKUP_SERVER}
+  if [[ ! $server_url =~ $validate ]]; then
+    echo "Invalid DEVICE_LOOKUP_SERVER URL $server_url"
+    exit 1
+  fi
+fi
+
+file_contents=$(cat $file_path)
+echo $file_contents | jq -re 2>&1>/dev/null
+
+if [ $? -ne 0 ];
+then
+  echo "Invalid JSON input"
+  exit 1
+fi
+
+json=$(jq -n \
+    --arg product_name "$product_name" \
+    --argjson file_contents "$file_contents" \
+    '{($product_name): $file_contents}')
+echo $json
+OUT=$(curl -s -X POST -H "Content-Type: application/json" -d "$json" $server_url/bios)
+echo $OUT | jq
