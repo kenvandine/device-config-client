@@ -1,0 +1,50 @@
+#!/bin/bash
+# Query service by product_name for configuration values
+
+usage ()
+{
+  echo "usage: $0 PRODUCT_NAME"
+}
+
+if [ $# -gt 0 ];
+then
+  if [ $1 == "-h" ];
+  then
+    usage
+    exit
+  fi
+fi
+
+# Attempt to read product_name from stdin and fallback to arg
+if [ -p /dev/stdin ]; then
+  read product_name
+elif [ -n "$1" ]; then
+  product_name="$1"
+fi
+
+validate='https?://*'
+
+if [ -z "${DEVICE_LOOKUP_SERVER}" ];
+then
+  server_url="$(snapctl get url 2>/dev/null)"
+  # Validate it
+  if [[ ! $server_url =~ $validate ]]; then
+    echo "DEVICE_LOOKUP_SERVER not set"
+    exit 1
+  fi
+else
+  server_url=${DEVICE_LOOKUP_SERVER}
+  if [[ ! $server_url =~ $validate ]]; then
+    echo "Invalid DEVICE_LOOKUP_SERVER URL $server_url"
+    exit 1
+  fi
+fi
+
+if [ $product_name ];
+then
+  OUT=$(curl -s -X GET $server_url/bios/$product_name)
+else
+  OUT=$(curl -s -X GET $server_url/bios)
+fi
+
+echo $OUT | jq

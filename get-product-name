@@ -1,0 +1,14 @@
+#!/bin/bash
+# 
+# Retrieve the product name from the DMI information
+# useful for the other device-config-client tools
+
+product_name=$(cat /sys/class/dmi/id/product_name 2>/dev/null)
+
+if [ ${#product_name} -gt 0 ];
+then
+    echo $product_name
+else
+    echo "Device product_name not available"
+    exit 1
+fi
